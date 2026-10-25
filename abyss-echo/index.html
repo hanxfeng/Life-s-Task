@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0c11">
+<title>深渊回响</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <header id="topbar">
+    <div class="brand">深渊回响</div>
+    <div class="topstats">
+      <span class="chip">第 <b id="floorNum">1</b> 层</span>
+      <span class="chip seed">种子 <b id="seedText">—</b></span>
+    </div>
+  </header>
+
+  <main id="stage">
+    <div id="canvasWrap">
+      <canvas id="gameCanvas"></canvas>
+      <div id="turnHint" class="turn-hint">你的回合</div>
+    </div>
+
+    <aside id="sidebar">
+      <section class="panel">
+        <div class="hero-head">
+          <div class="avatar" id="heroAvatar">剑</div>
+          <div class="hero-meta">
+            <div class="hero-name" id="heroName">剑士</div>
+            <div class="hero-level">Lv.<span id="heroLevel">1</span></div>
+          </div>
+        </div>
+        <div class="bar hp-bar">
+          <div class="bar-fill" id="hpFill"></div>
+          <div class="bar-text" id="hpText">110 / 110</div>
+        </div>
+        <div class="bar res-bar" id="resBar">
+          <div class="bar-fill" id="resFill"></div>
+          <div class="bar-text" id="resText">0 / 100</div>
+        </div>
+        <div class="bar exp-bar">
+          <div class="bar-fill" id="expFill"></div>
+          <div class="bar-text" id="expText">0 / 18</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><span>攻击</span><b id="statAtk">12</b></div>
+          <div class="stat"><span>防御</span><b id="statDef">6</b></div>
+          <div class="stat"><span>暴击</span><b id="statCrit">5%</b></div>
+          <div class="stat"><span>移动</span><b id="statMove">3/3</b></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">技能</div>
+        <div id="skillList" class="skill-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">装备 <span class="coin" id="goldText">0</span></div>
+        <div id="equipList" class="equip-list"></div>
+      </section>
+
+      <section class="panel log-panel">
+        <div class="panel-title">日志</div>
+        <div id="logList" class="log-list"></div>
+      </section>
+    </aside>
+  </main>
+
+  <footer id="bottombar">
+    <div class="dpad">
+      <button class="dbtn" data-dir="nw">↖</button>
+      <button class="dbtn" data-dir="n">↑</button>
+      <button class="dbtn" data-dir="ne">↗</button>
+      <button class="dbtn" data-dir="w">←</button>
+      <button class="dbtn" data-dir="wait">·</button>
+      <button class="dbtn" data-dir="e">→</button>
+      <button class="dbtn" data-dir="sw">↙</button>
+      <button class="dbtn" data-dir="s">↓</button>
+      <button class="dbtn" data-dir="se">↘</button>
+    </div>
+    <div class="keyhint">
+      <span><kbd>WASD</kbd>/<kbd>方向键</kbd> 移动</span>
+      <span><kbd>空格</kbd> 待机</span>
+      <span><kbd>1</kbd><kbd>2</kbd> 技能</span>
+      <span>点击地图移动/攻击</span>
+    </div>
+    <div class="action-row">
+      <button id="waitBtn" class="action-btn">待机</button>
+    </div>
+  </footer>
+
+  <div id="campOverlay" class="overlay">
+    <div class="camp">
+      <header class="camp-head">
+        <div class="camp-title">深渊回响</div>
+        <div class="camp-points">◈ <b id="campPoints">0</b></div>
+      </header>
+      <nav class="camp-tabs" id="campTabs">
+        <button data-tab="altar" class="active">祭坛</button>
+        <button data-tab="unlock">秘藏</button>
+        <button data-tab="code">兑换</button>
+      </nav>
+      <div id="campBody" class="camp-body"></div>
+      <footer class="camp-foot">
+        <div id="campMsg" class="camp-msg"></div>
+        <button id="startRunBtn" class="action-btn primary big">开始冒险</button>
+      </footer>
+    </div>
+  </div>
+
+  <div id="classOverlay" class="overlay hidden">
+    <div class="overlay-card wide">
+      <h2 class="neutral">选择职业</h2>
+      <p>每个职业拥有独立的资源与技能，玩法差异明显。</p>
+      <div id="classList" class="class-list"></div>
+    </div>
+  </div>
+
+  <div id="talentOverlay" class="overlay hidden">
+    <div class="overlay-card wide">
+      <h2 class="gold">天赋觉醒</h2>
+      <p>选择一项天赋强化本局角色。</p>
+      <div id="talentList" class="talent-list"></div>
+    </div>
+  </div>
+
+  <div id="shopOverlay" class="overlay hidden">
+    <div class="overlay-card wide">
+      <h2 class="gold">流浪商人</h2>
+      <p class="shop-gold">金币：<b id="shopGold">0</b></p>
+      <div id="shopList" class="shop-list"></div>
+      <button id="shopCloseBtn" class="action-btn">离开商店</button>
+    </div>
+  </div>
+
+  <div id="eventOverlay" class="overlay hidden">
+    <div class="overlay-card wide">
+      <h2 class="neutral" id="eventTitle">事件</h2>
+      <p id="eventDesc"></p>
+      <div id="eventOptions" class="event-options"></div>
+    </div>
+  </div>
+
+  <div id="overlay" class="overlay hidden">
+    <div class="overlay-card">
+      <h2 id="overlayTitle">你倒下了</h2>
+      <p id="overlayDesc"></p>
+      <div id="overlayStats" class="overlay-stats"></div>
+      <button id="overlayBtn" class="action-btn primary">返回营地</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/rng.js"></script>
+<script src="js/data.js"></script>
+<script src="js/map.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/echo-code.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/render.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
